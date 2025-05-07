@@ -1,0 +1,80 @@
+<mjml>
+  <mj-body background-color="#F4F4F4" color="#55575d" font-family="Arial, sans-serif">
+    <mj-section background-color="#3735A3" background-repeat="no-repeat" text-align="center" vertical-align="top">
+      <mj-column>
+        <!-- <mj-image align="center" border="none" padding-bottom="30px" padding="10px 25px" src="http://5vph.mj.am/img/5vph/b/1g86w/0g67t.png" target="_blank" title="" width="180px"></mj-image> -->
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-top="0px" padding="10px 25px">
+          <p style="line-height: 18px; margin: 10px 0; text-align: center;font-size:14px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">RESERVAS&nbsp; &nbsp; &nbsp;| &nbsp; &nbsp; LIGAS&nbsp; &nbsp; &nbsp;| &nbsp; &nbsp; TORNEOS</p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#3735A3" background-repeat="no-repeat" text-align="center" vertical-align="top" padding="0 0 0 0">
+      <!-- <mj-column>
+        <mj-image align="center" border="none" padding-bottom="0px" padding-left="0px" padding-right="0px" padding="0px 25px" src="http://5vph.mj.am/img/5vph/b/1g86w/0696u.jpeg" target="_blank" title="" width="780px"></mj-image>
+      </mj-column> -->
+    </mj-section>
+    <mj-section background-color="#3735A3" background-repeat="no-repeat" text-align="center" vertical-align="top" padding="0 0 0 0">
+      <mj-column>
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="14px" line-height="22px" padding-bottom="5px" padding-top="25px" padding="10px 25px">
+          <p style="line-height: 60px; text-align: center; margin: 10px 0;font-size:45px;color:#fcfcfc;font-family:'Times New Roman',Helvetica,Arial,sans-serif"><b>WeLoveRacket</b></p>
+        </mj-text>
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="14px" line-height="22px" padding-bottom="20px" padding-top="0px" padding="10px 25px">
+          <p style="line-height: 30px; text-align: center; margin: 10px 0;color:#f5f5f5;font-size:25px;font-family:'Times New Roman',Helvetica,Arial,sans-serif"><b>Bienvenido {{$data['club_name']}}</b><br /></p>
+        </mj-text>
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="14px" line-height="22px" padding-bottom="0px" padding-top="5px" padding="10px 25px">
+          <p style="line-height: 16px; text-align: justify; margin: 10px 0;font-size:13px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Te damos las gracias por confiar en We<span style="color:red;">&#10084;</span>Racket. Esperamos que tu 
+            experiencia sea lo más gratificante posible y para ello podrás hacer un uso premium 
+            de la aplicación durante los próximos 60 días. Pasado estos dos meses podrás suscribirte en el apartado de subscripciones 
+            para poder seguir utilizándola. Todo ello sin compromiso y sabiendo que estás contento con nosotros. </span></p>
+        </mj-text>
+        <mj-button background-color="#ffffff" border-radius="3px" font-family="Times New Roman, Helvetica, Arial, sans-serif" href="{{ __('pleb.mail.welcome_url') }}"  font-size="18px" font-weight="normal" inner-padding="10px 25px" padding-bottom="30px" padding="10px 25px"><span style="color:#212020">Entrar</span></mj-button>
+      </mj-column>
+    </mj-section>
+    
+    <mj-section background-color="#3735A3" padding-left="50px" padding-right="50px">
+      <mj-group>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/stopwatch.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Reservas</p></mj-text>
+        </mj-column>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/wallet.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Monedero</p></mj-text>
+        </mj-column>
+      </mj-group> 
+      <mj-group>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/stopwatch.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Torneos</p></mj-text>
+        </mj-column>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/stopwatch.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Ligas</p></mj-text>
+        </mj-column>
+      </mj-group>    
+      <mj-group>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/stopwatch.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Monitores</p></mj-text>
+        </mj-column>
+        <mj-column>
+          <mj-image src="https://api.weloveracket.com/assets/img/emails/stopwatch.png" width="52px"></mj-image>
+          <mj-text  align="center" font-family="Open Sans, Arial, sans-serif; "><p style="line-height: 16px;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">Socios</p></mj-text>
+        </mj-column>
+      </mj-group>         
+    </mj-section>
+    <mj-section background-color="#3735A3" background-repeat="no-repeat" text-align="center" vertical-align="top" padding-bottom="40px" padding="0 0 0 0">
+      <mj-column>
+        <mj-button background-color="#ffffff" border-radius="3px" font-family="Times New Roman, Helvetica, Arial, sans-serif" href="{{ __('pleb.mail.info_url') }}"  font-size="18px" font-weight="normal" inner-padding="10px 25px" padding-bottom="30px" padding="10px 25px"><span style="color:#212020">Más info</span></mj-button>
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-top="5px" padding="10px 25px">
+          <p style="line-height: 16px; text-align: justify; font-style: italic;margin: 10px 0;font-size:13px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">WeLoveRacket es una aplicación web desarrollada con mucho cariño por personas que 
+            aman el pádel y tenis. Es utilizada por clubes de diferentes partes del mundo y con ella podrás realizar cualquier tipo de gestión en tu club, desde reserva de pistas, creación de ligas y torneos, administración de socios o monitores, monedero virtual.
+            Haz uso de nuestra promoción y pruébala dos meses gratis. Si después de este tiempo no estás conforme podrás darte de baja sin ningún compromiso. </span></p>
+        </mj-text>
+        <mj-text align="left" color="#55575d" font-family="Arial, sans-serif" font-size="13px" line-height="22px" padding-bottom="0px" padding-top="5px" padding="10px 25px">
+          <p style="line-height: 16px; text-align: center; margin: 10px 0;font-size:12px;color:#ffffff;font-family:'Times New Roman',Helvetica,Arial,sans-serif">© 2025 WeLoveRacket </span></p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
