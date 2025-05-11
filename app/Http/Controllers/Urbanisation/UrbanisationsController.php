@@ -158,11 +158,7 @@ class UrbanisationsController extends Controller
              ]);
          }
 
-       /* $validMonitor = User::where('id', '<>', $id) 
-                           ->where('mobile', $request->mobile)
-                          // ->orWhere('email', $request->email)
-                           ->first();
-*/
+
         $validMonitor = Urbanisation::where(function ($query) use($id){
                             $query->where('id', '<>', $id);
                         })->where(function ($query) use($request){

@@ -507,11 +507,15 @@ Route::group([
      Route::post("owners/store-votes", [OwnersController::class, "storeVotes"])->name('storeVotes');
      Route::get("owners/remove-property/{id}", [OwnersController::class, "removeProperty"])->name('removeProperty');
      Route::get("owners/config", [OwnersController::class, "config"])->name('config');
+     Route::get("owners/assistants", [OwnersController::class, "getAssistans"])->name('getAssistans');
      Route::get("owners/owner-by-building", [OwnersController::class, "getOwnerByBuilding"])->name('getOwnerByBuilding');
      Route::get("owners/votes-by-question", [OwnersController::class, "getVotesByQuestion"])->name('getVotesByQuestion');
      Route::get("owners/result-by-question", [OwnersController::class, "getResultByQuestion"])->name('getVotesByQuestion');
+     Route::post("owners/update/{id}", [OwnersController::class, "update"])->name('update');
      Route::resource("owners", OwnersController::class);
 
+     Route::post("meetings/add-ssistant-meeting/{meeting_id}/{owner_id}", [MeetingsController::class, "addAssistantMeeting"]);
+     Route::post("meetings/cancel-ssistant-meeting/{meeting_id}/{owner_id}", [MeetingsController::class, "cancelAssistantMeeting"]);
      Route::post("meetings/add-question", [MeetingsController::class, "addQuestion"])->name('addQuestion');
      Route::get("meetings/remove-question/{id}", [MeetingsController::class, "removeQuestion"])->name('removeQuestion');
      Route::get("meetings/config", [MeetingsController::class, "config"])->name('config');

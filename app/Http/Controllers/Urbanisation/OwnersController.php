@@ -8,6 +8,7 @@ use App\Models\Meeting\Meeting;
 use App\Models\Meeting\Vote;
 use App\Models\Urbanisation\Owner;
 use App\Models\Urbanisation\Property;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -28,11 +29,12 @@ class OwnersController extends Controller
         if( strlen($search) > 0){
             $owners->where(DB::raw("CONCAT(owners.name)") , 'like', '%'.$search.'%');
         }
+
         if( strlen($building) > 0){
             $owners->where('building', $building);
         }
 
-        $owners = $owners->orderBy('building', 'asc')
+        $owners = $owners->orderBy('building', 'asc')//->orderBy('floor', 'asc')
         ->paginate(18);
 
 
@@ -45,7 +47,11 @@ class OwnersController extends Controller
         }
         $total = $total->count();
 
-        
+        /*
+            SELECT * FROM owners o 
+            LEFT JOIN owner_meeting om ON o.id = om.owner_id AND om.meeting_id = 1 AND om.deleted_at IS null 
+            WHERE o.urbanisation_id = 1 ;
+        */
                      
         return response()->json([
             "total" => $total,
@@ -53,19 +59,78 @@ class OwnersController extends Controller
         ]);
     }
 
+     public function getAssistans(Request $request){
+        
+        $search = $request->search;
+        $urbanisationId = $request->urbanisation_id;
+        $building = $request->building;
+        $meetingId = $request->meeting_id;
+
+       
+
+         $owners = Owner::select("owners.*", "owner_meeting.id as assistId")
+            ->leftJoin("owner_meeting", function($join) use($meetingId){
+                $join->on('owners.id', '=', 'owner_meeting.owner_id')
+                    ->where('owner_meeting.meeting_id', '=', $meetingId)
+                    ->where('owner_meeting.deleted_at', NULL);
+            })
+            ->where('urbanisation_id', $urbanisationId);
+
+            if( strlen($search) > 0){
+                $owners->where(DB::raw("CONCAT(owners.name)") , 'like', '%'.$search.'%');
+            }
+
+            if( strlen($building) > 0){
+                $owners->where('building', $building);
+            }
+        $owners = $owners->orderBy('building', 'asc')//->orderBy('floor', 'asc')
+        ->paginate(18);
+
+        $total = Owner::where('urbanisation_id', $urbanisationId);
+        if( strlen($search) > 0){
+            $total->where(DB::raw("CONCAT(owners.name)") , 'like', '%'.$search.'%');
+        }
+        if( strlen($building) > 0){
+            $total->where('building', $building);
+        }
+        $total = $total->count();
+                     
+        return response()->json([
+            "total" => $total,
+            "owners" => $owners
+        ]);
+     }
+
 
     public function getOwnerByBuilding(Request $request){
 
         $building = $request->building;
         $urbanisationId = $request->urbanisation_id;
+        $meetingId = 1;
 
-        $owners = Owner::where('urbanisation_id', $urbanisationId);
+        $owners = Owner::select("owners.*", "owner_meeting.id as assistId")
+            ->join("owner_meeting", function($join) use($meetingId){
+                $join->on('owners.id', '=', 'owner_meeting.owner_id')
+                    ->where('owner_meeting.meeting_id', '=', $meetingId)
+                    ->where('owner_meeting.deleted_at', NULL);
+            })
+            ->where('urbanisation_id', $urbanisationId);
+
+            if( strlen($building) > 0){
+                $owners->where('building', $building);
+            }
+        $owners = $owners->orderBy('building', 'asc')->get();
+       
+
+      /*  $owners = Owner::where('urbanisation_id', $urbanisationId);
         
         if( strlen($building) > 0){
             $owners->where('building', $building);
         }
 
         $owners = $owners->orderBy('building', 'asc')->get();
+
+        */
 
         return response()->json([
             "message" => 200,
@@ -248,7 +313,48 @@ class OwnersController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $owner = Owner::findOrFail($id);
+    
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:191',
+            'building' => 'required|max:50', //|digits:9',
+            'floor' => 'required|max:191',
+            'letter' => 'required|max:191'
+        ]);
+
+        if($validator->fails()){
+            $errors = get_errors($validator->errors());
+
+            return response()->json([
+                 'message' => 422,
+                 'errors_text' => $errors
+             ]);
+         }
+
+
+        $validOwner = Owner::where(function ($query) use($id){
+                            $query->where('id', '<>', $id);
+                        })->where(function ($query) use($request){
+                            $query->where('name', $request->name);
+                        })->first();
+
+        if($validOwner){
+            $errors[] = 'Ya existe un propietario con ese nombre y apellido ';
+            return response()->json([
+                'message' => 422,
+                'errors_text' => $errors
+            ]);
+        }   
+        
+
+        $owner->update($request->all());
+
+
+        return response()->json([
+            'message' => 200,
+            'message_text' => 'Propietario actualizado correctamente'
+        ]);
+
     }
 
     /**
