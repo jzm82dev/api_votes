@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Urbanisation\OwnersController;
 use App\Models\Meeting\Answer;
 use App\Models\Meeting\Meeting;
+use App\Models\Meeting\OwnerMeeting;
 use App\Models\Meeting\Question;
 use App\Models\Meeting\Vote;
 use Carbon\Carbon;
@@ -257,6 +258,47 @@ class MeetingsController extends Controller
         ]);
     }
 
+
+    public function addAssistantMeeting(string $meetingId, string $wonerId){
+        
+
+        $ownerMeeting = OwnerMeeting::where('owner_id', $wonerId)->where('meeting_id', $meetingId)->first();
+        if( $ownerMeeting ){
+            return response()->json([
+                'message' => 200
+            ]);
+        }else{
+            $ownerMeeting = OwnerMeeting::create([
+                'owner_id' => $wonerId,
+                'meeting_id' => $meetingId
+            ]);
+        }
+
+      
+        return response()->json([
+            'message' => 200
+        ]);
+        
+    }
+
+    public function cancelAssistantMeeting(string $meetingId, string $wonerId){
+        
+
+        $ownerMeeting = OwnerMeeting::where('owner_id', $wonerId)->where('meeting_id', $meetingId)->first();
+        if( $ownerMeeting ){
+            $ownerMeeting->delete();
+            return response()->json([
+                'message' => 200,
+                'hola' => 'Encontrado'
+            ]);
+        }
+
+      
+        return response()->json([
+            'message' => 201
+        ]);
+        
+    }
     /**
      * Update the specified resource in storage.
      */
