@@ -20,6 +20,7 @@ class UrbanisationResource extends JsonResource
             'president' => $this->resource->president, 
             'email' => $this->resource->email,
             'hash' => $this->resource->hash,
+            'direction' => $this->resource->address,
             'mobile' => $this->resource->mobile,
             'avatar' => $this->resource->avatar ? env("APP_URL")."storage/".$this->resource->avatar : 'assets/img/user-06.jpg',
         ];

@@ -40,7 +40,12 @@ use App\Http\Controllers\Journey\JourneyController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Tournament\TournamentsController;
 use App\Http\Controllers\Admin\Reservation\ReservationsController;
+use App\Http\Resources\Urbanisation\UrbanisationCollection;
 use App\Models\Club\ConfirmEmail;
+use App\Models\Meeting\Meeting;
+use App\Models\Meeting\Question;
+use App\Models\Meeting\Vote;
+use App\Models\Urbanisation\Urbanisation;
 
 class PublicDataController extends Controller
 {
@@ -66,50 +71,95 @@ class PublicDataController extends Controller
     }
 
 
+     public function getUrbanizations(Request $request){
+
+        $search = $request->search;
+        
+        $urbanisations = Urbanisation::where(DB::raw("CONCAT(urbanisations.name)") , 'like', '%'.$search.'%')
+                     ->orderBy('id', 'desc')
+                     ->get();
+
+        return response()->json([
+            "urbanisations" => UrbanisationCollection::make($urbanisations)
+        ]);
+    }
+
      /**
      * Display the specified resource.
      */
     public function show(string $hash)
     {
-        $clubData = [
-            "basic_services" => [],
-            "extra_services" => []
-        ];
-        
-        $club = Club::where('hash', $hash)->first();
+    
+        $urbanisation = Urbanisation::where('hash', $hash)->first();
         //$city = (isNull($club->additional_information)) ? City::findOrFail($club->additional_information->city_id): null;
-        $city = $club->additional_information->city->name ?? '';
-        $monitors = User::where('club_id', $club->id)
-            ->orderBy('id', 'desc')
-            ->whereHas("roles", function($q){
-                $q->where("name", "like", "%MONITOR%");
-            })->get();
-        if( $club->services){
-            $clubData = [
-                "basic_services" => $club->services,
-                "extra_services" => $club->services->more_services ? json_decode($club->services->more_services) : []
-            ];
-        }
+        $city = $urbanisation->city->name ?? '';
+        $meets = Meeting::where('urbanisation_id', $urbanisation->id)->get();
 
-        $majorSport = 0;
-        $majorSportResult =  DB::table('courts')
-            ->select(DB::raw('count(*) as total, sport_type'))
-            ->whereNull('deleted_at')
-            ->where('club_id', $club->id)
-            ->groupBy('sport_type')
-            ->first();
-        if( $majorSportResult ){
-            $majorSport = $majorSportResult->sport_type;
-        }
 
 
         return response()->json([
-            'club' => ClubResource::make($club),
+            'urbanisation' => $urbanisation,
             'city' => $city,//($city!=null) ? $city->name.', '.$city->state->name: '',
-            'all_services' => $clubData,
-            'monitors' => $monitors,
-            'major_sport_id' => $majorSport
+            'meets' => $meets
         ]);
+    }
+
+
+    public function getMeeting($id){
+         
+        $meeting = Meeting::findOrFail($id);
+
+        $questions = Question::where('meeting_id', $id)->get();
+
+        //$meeting['properties'] = $meeting->properties;
+        $meeting['urbanisation'] = $meeting->urbanisation;
+
+        return response()->json( [
+            'response' => 200,
+            'meeting' => $meeting,
+            'questions' => $questions
+        ]);
+    }
+
+    
+    public function getFinalReport($id){
+
+        $meetingId = $id;
+        $questions = Question::where('meeting_id', $meetingId)->get();
+
+        $finalVotes = array();
+       
+
+        foreach ($questions as $question) {
+            $totalVotes = Vote::where( 'question_id', $question->id )->count();
+           
+           $provisional = DB::select("SELECT COUNT(*) AS 'votes',answer_id, a.name, ROUND(SUM(o.total_coefficient),3) as total_coefficient 
+                FROM votes v
+                INNER JOIN answers a ON a.id = v.answer_id 
+                INNER JOIN owners o ON v.owner_id = o.id
+                WHERE v.question_id = ? GROUP BY answer_id ORDER BY a.id;", [$question->id]); 
+            $resultVotes['question'] = $question->name;
+
+            
+            foreach ($provisional as $item ) {
+                $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient 
+                    FROM owners o INNER JOIN votes v ON v.owner_id = o.id 
+                    WHERE v.answer_id = ? ORDER BY o.building, o.id;", [$item->answer_id]);
+                
+                $item->owners = $woners;
+                $item->percent = round($item->votes * 100 / $totalVotes, 2);
+                
+            }
+            $resultVotes['result'] = $provisional;
+            $finalVotes[] = $resultVotes;      
+
+        }
+
+        return response()->json([
+            "message" => 200,
+            "final_result" => $finalVotes
+        ]);
+        
     }
 
 

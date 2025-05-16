@@ -68,7 +68,7 @@ class OwnersController extends Controller
 
        
 
-         $owners = Owner::select("owners.*", "owner_meeting.id as assistId")
+         $owners = Owner::select("owners.*", "owner_meeting.id as assistId", "owner_meeting.represented_by")
             ->leftJoin("owner_meeting", function($join) use($meetingId){
                 $join->on('owners.id', '=', 'owner_meeting.owner_id')
                     ->where('owner_meeting.meeting_id', '=', $meetingId)
@@ -172,18 +172,27 @@ class OwnersController extends Controller
 
         foreach ($answers as $result) {
             
-            $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient 
+            $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient, om.represented_by   
                                   FROM owners o INNER JOIN votes v ON v.owner_id = o.id 
-	                              WHERE v.answer_id = ? ORDER BY o.building, o.id;", [$result->id]);
+                                  LEFT JOIN owner_meeting om ON o.id = om.owner_id AND om.deleted_at IS NULL 
+	                              WHERE v.answer_id = ? AND v.deleted_at IS null ORDER BY o.building, o.id;", [$result->id]);
             $stdProvisional = new stdClass();
             $stdProvisional->vote = $result->name;
-            $stdProvisional->total = round($result->total_coefficient,3);
+            //$stdProvisional->total = round($result->total_coefficient,3);
             $stdProvisional->owners = $woners;
             $ownerByVotes[] = $stdProvisional;
         }
 
         foreach ($resultVotes as $result) {
             $result->percent = round($result->votes * 100 / $totalVotes, 2);
+        }
+
+        foreach ($ownerByVotes as $result) {
+            $totalCoefficient = 0;
+            foreach ($result->owners as $owner) {
+                $totalCoefficient += $owner->total_coefficient;
+            }
+            $result->total_coefficient = $totalCoefficient;
         }
 
         return response()->json([

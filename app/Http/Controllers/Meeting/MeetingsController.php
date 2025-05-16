@@ -200,9 +200,10 @@ class MeetingsController extends Controller
 
             
             foreach ($provisional as $item ) {
-                $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient 
+                $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient, om.represented_by 
                     FROM owners o INNER JOIN votes v ON v.owner_id = o.id 
-                    WHERE v.answer_id = ? ORDER BY o.building, o.id;", [$item->answer_id]);
+                    LEFT JOIN owner_meeting om ON o.id = om.owner_id AND om.deleted_at IS NULL
+                    WHERE v.answer_id = ?  AND v.deleted_at IS null ORDER BY o.building, o.id;", [$item->answer_id]);
                 
                 $item->owners = $woners;
                 $item->percent = round($item->votes * 100 / $totalVotes, 2);
@@ -259,8 +260,11 @@ class MeetingsController extends Controller
     }
 
 
-    public function addAssistantMeeting(string $meetingId, string $wonerId){
+    //public function addAssistantMeeting(string $meetingId, string $wonerId){
+     public function addAssistantMeeting(Request $request){
         
+        $wonerId = $request->owner_id;
+        $meetingId = $request->meeting_id;
 
         $ownerMeeting = OwnerMeeting::where('owner_id', $wonerId)->where('meeting_id', $meetingId)->first();
         if( $ownerMeeting ){
@@ -268,10 +272,18 @@ class MeetingsController extends Controller
                 'message' => 200
             ]);
         }else{
-            $ownerMeeting = OwnerMeeting::create([
-                'owner_id' => $wonerId,
-                'meeting_id' => $meetingId
-            ]);
+            if( strlen($request->represented_by)){
+                $ownerMeeting = OwnerMeeting::create([
+                    'owner_id' => $wonerId,
+                    'meeting_id' => $meetingId,
+                    'represented_by' => $request->represented_by
+                ]);
+            }else{
+                $ownerMeeting = OwnerMeeting::create([
+                    'owner_id' => $wonerId,
+                    'meeting_id' => $meetingId
+                ]);
+            }
         }
 
       
