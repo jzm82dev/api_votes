@@ -14,7 +14,8 @@ class OwnerMeeting extends Model
     use SoftDeletes;
     protected $fillable = [
         'owner_id',
-        'meeting_id'
+        'meeting_id',
+        'represented_by'
     ];
 
     protected $table = "owner_meeting";

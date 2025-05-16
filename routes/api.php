@@ -205,7 +205,11 @@ Route::group([
     Route::post("get-couple/{couple_id}", [PublicDataController::class, "getCouple"])->name('getCouple');
     Route::post("get-matchs-journey/{journey_id}", [PublicDataController::class, "getMatchsJourney"])->name('getMatchsJourney');
     Route::post("get-draw", [PublicDataController::class, "getDraw"])->name('getDraw');
-    
+
+    Route::post("get-urbanizations", [PublicDataController::class, "getUrbanizations"])->name('getUrbanizations');
+    Route::post("urbanisation-data/get-info/{hash}", [PublicDataController::class, "show"])->name('show');
+    Route::post("urbanisation-data/meeting-info/{id}", [PublicDataController::class, "getMeeting"])->name('getMeeting');
+    Route::post("urbanisation-data/final-report/{id}", [PublicDataController::class, "getFinalReport"])->name('getFinalReport');
 });
 
 
@@ -514,7 +518,8 @@ Route::group([
      Route::post("owners/update/{id}", [OwnersController::class, "update"])->name('update');
      Route::resource("owners", OwnersController::class);
 
-     Route::post("meetings/add-ssistant-meeting/{meeting_id}/{owner_id}", [MeetingsController::class, "addAssistantMeeting"]);
+     //Route::post("meetings/add-ssistant-meeting/{meeting_id}/{owner_id}", [MeetingsController::class, "addAssistantMeeting"]);
+     Route::post("meetings/add-ssistant-meeting", [MeetingsController::class, "addAssistantMeeting"]);
      Route::post("meetings/cancel-ssistant-meeting/{meeting_id}/{owner_id}", [MeetingsController::class, "cancelAssistantMeeting"]);
      Route::post("meetings/add-question", [MeetingsController::class, "addQuestion"])->name('addQuestion');
      Route::get("meetings/remove-question/{id}", [MeetingsController::class, "removeQuestion"])->name('removeQuestion');
