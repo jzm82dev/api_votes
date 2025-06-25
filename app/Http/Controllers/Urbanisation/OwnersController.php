@@ -106,7 +106,7 @@ class OwnersController extends Controller
 
         $building = $request->building;
         $urbanisationId = $request->urbanisation_id;
-        $meetingId = 3;
+        $meetingId = $request->meeting_id;
 
         $owners = Owner::select("owners.*", "owner_meeting.id as assistId")
             ->join("owner_meeting", function($join) use($meetingId){
