@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Urbanisation;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting\Answer;
 use App\Models\Meeting\Meeting;
+use App\Models\Meeting\Question;
 use App\Models\Meeting\Vote;
 use App\Models\Urbanisation\Owner;
 use App\Models\Urbanisation\Property;
@@ -156,6 +157,7 @@ class OwnersController extends Controller
     public static function getResultByQuestion(Request $request){
 
         $questionId = $request->question_id;
+        $question = Question::findOrFail($questionId);
 
         $resultVotes = DB::select("SELECT COUNT(*) AS 'votes',answer_id, a.name, ROUND(SUM(o.total_coefficient),3) as total_coefficient 
             FROM votes v
@@ -175,7 +177,8 @@ class OwnersController extends Controller
             $woners = DB::select("SELECT o.name, o.total_coefficient, o.building, o.`floor`, o.letter, o.total_coefficient, om.represented_by   
                                   FROM owners o INNER JOIN votes v ON v.owner_id = o.id 
                                   LEFT JOIN owner_meeting om ON o.id = om.owner_id AND om.deleted_at IS NULL 
-	                              WHERE v.answer_id = ? AND v.deleted_at IS null ORDER BY o.building, o.id;", [$result->id]);
+	                              WHERE om.meeting_id = ? AND v.answer_id = ? AND v.deleted_at IS null 
+                                  ORDER BY o.building, o.id;", [$question->meeting_id, $result->id]);
             $stdProvisional = new stdClass();
             $stdProvisional->vote = $result->name;
             //$stdProvisional->total = round($result->total_coefficient,3);
